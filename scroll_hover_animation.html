@@ -1,0 +1,104 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moving Shopping Cart</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+    body {
+        height: 200vh;
+        margin: 0;
+        overflow-x: hidden;
+        background-color: #f8f5ec;
+        position: relative;
+    }
+    .cart-icon {
+        width: 50px;
+        height: 50px;
+        background-color: rgb(76, 97, 183);
+        border-radius: 50%;
+        position: absolute;
+        top: 50px;
+        right: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: transform 0.3s ease-in-out;
+    }
+    
+    .cart-icon:hover {
+        transform: scale(1.2) rotate(360deg);
+        background-color: rgb(193, 73, 93);
+    }
+    </style>
+</head>
+<body>
+    <div class="cart-icon" id="cart-icon">
+        <i class="bi bi-cart3 cart-img"></i>
+    </div>
+    <script>
+        let isHovered = false;
+let isMoving = true;
+const cartIcon = document.getElementById("cart-icon");
+let cartPosition = 50;
+let lastScrollTop = window.scrollY;
+
+function moveCart() {
+    const viewportHeight = window.innerHeight;
+    const maxBottom = viewportHeight - 100; // Bottom limit of the viewport
+    const maxPageHeight = document.documentElement.scrollHeight - 100; // Bottom limit of the document
+
+    if (isMoving && !isHovered) {
+        if (cartPosition < maxPageHeight && cartPosition < maxBottom + window.scrollY) {
+            cartPosition += 1;
+            cartIcon.style.top = cartPosition + "px";
+        }
+    }
+    requestAnimationFrame(moveCart);
+}
+
+// Stops movement on hover
+cartIcon.addEventListener("mouseenter", () => {
+    isHovered = true;
+    isMoving = false;
+});
+
+// Resumes movement on mouse leave
+cartIcon.addEventListener("mouseleave", () => {
+    isHovered = false;
+    isMoving = true;
+});
+
+// Controls movement based on scrolling
+window.addEventListener("scroll", () => {
+    let scrollTop = window.scrollY;
+
+    // Start movement when the user starts scrolling
+    if (!isMoving && scrollTop > lastScrollTop) {
+        isMoving = true;
+    }
+
+    // Reset position when fully scrolled to top
+    if (scrollTop === 0) {
+        cartPosition = 50;
+        cartIcon.style.top = cartPosition + "px";
+        isMoving = true; // Ensure it resumes movement
+    }
+
+    lastScrollTop = scrollTop;
+});
+
+// Ensure movement starts as soon as the page loads
+window.addEventListener("load", () => {
+    isMoving = true;
+    moveCart();
+});
+
+    </script>
+</body>
+</html>
